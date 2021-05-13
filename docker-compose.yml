@@ -2,14 +2,30 @@ version: '3.3'
 
 services:
 
-    calculatorservice:
-      image: currency-calculator-service
-      container_name: currency-calculator-app
-      build:
-        context: .
-        dockerfile: Dockerfile
-      ports:
-        - "8080:8080"
-      restart: always
+  database:
+    image: mysql:latest
+    container_name: mysql-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=kot
+    ports:
+      - "3306:3306"
+    restart: always
+
+  calculatorservice:
+    image: currency-calculator-service
+    container_name: currency-calculator-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    restart: always
+    depends_on:
+      - database
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/calculator?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: kot
+
 
 

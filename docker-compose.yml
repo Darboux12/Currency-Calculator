@@ -1,0 +1,15 @@
+version: '3.3'
+
+services:
+
+    calculatorservice:
+      image: currency-calculator-service
+      container_name: currency-calculator-app
+      build:
+        context: .
+        dockerfile: Dockerfile
+      ports:
+        - "8080:8080"
+      restart: always
+
+

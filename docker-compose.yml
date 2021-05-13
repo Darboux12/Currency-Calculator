@@ -6,9 +6,12 @@ services:
     image: mysql:latest
     container_name: mysql-db
     environment:
-      - MYSQL_ROOT_PASSWORD=kot
+      MYSQL_ROOT_PASSWORD: currencydatabase
+      MYSQL_DATABASE: calculator
     ports:
       - "3306:3306"
+    expose:
+      - "3306"
     restart: always
 
   calculatorservice:
@@ -25,7 +28,10 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/calculator?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: kot
+      SPRING_DATASOURCE_PASSWORD: currencydatabase
+
+
+
 
 
 

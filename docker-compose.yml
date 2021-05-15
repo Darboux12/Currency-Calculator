@@ -28,6 +28,15 @@ services:
     depends_on:
       - database
 
+  flyway:
+    image: boxfuse/flyway:latest-alpine
+    container_name: my-flyway
+    command: -url=jdbc:mysql://mysql-database:3306/calculator -schemas=public -user=root -password=currencydatabase -connectRetries=60 migrate
+    volumes:
+      - ./src/main/resources/db.migration:/flyway/sql/
+    depends_on:
+      - database
+
 
 
 

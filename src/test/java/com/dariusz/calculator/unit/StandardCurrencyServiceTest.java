@@ -1,14 +1,11 @@
 package com.dariusz.calculator.unit;
 
-import com.dariusz.calculator.controller.standard.StandardCurrencyController;
 import com.dariusz.calculator.dal.entity.Currency;
 import com.dariusz.calculator.dal.repository.CurrencyRepository;
 import com.dariusz.calculator.dto.request.CurrencyExchangeRequest;
 import com.dariusz.calculator.dto.request.CurrencyRatesRequest;
 import com.dariusz.calculator.dto.response.CurrencyExchangeResponse;
 import com.dariusz.calculator.dto.response.CurrencyRatesResponse;
-import com.dariusz.calculator.dto.response.CurrencyResponse;
-import com.dariusz.calculator.service.CurrencyService;
 import com.dariusz.calculator.service.CurrencyValidityService;
 import com.dariusz.calculator.service.EventService;
 import com.dariusz.calculator.service.exception.CurrencyAmountNotPositiveException;
@@ -22,13 +19,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -83,7 +76,7 @@ class StandardCurrencyServiceTest {
     }
 
     @Test
-    void exchangeCurrency_Not_Available_Currency_From_Return_Exception() throws IOException, InterruptedException, CurrencyNotAvailableException, CurrencyAmountNotPositiveException {
+    void exchangeCurrency_Not_Available_Currency_From_Return_Exception() throws CurrencyNotAvailableException, CurrencyAmountNotPositiveException {
 
         CurrencyExchangeRequest request = new CurrencyExchangeRequest("NON", "EUR", 5.0);
 
@@ -98,7 +91,7 @@ class StandardCurrencyServiceTest {
     }
 
     @Test
-    void exchangeCurrency_Not_Available_Currency_To_Return_Exception() throws IOException, InterruptedException, CurrencyNotAvailableException, CurrencyAmountNotPositiveException {
+    void exchangeCurrency_Not_Available_Currency_To_Return_Exception() throws CurrencyNotAvailableException, CurrencyAmountNotPositiveException {
 
         CurrencyExchangeRequest request = new CurrencyExchangeRequest("USD", "NON", 5.0);
 
@@ -113,7 +106,7 @@ class StandardCurrencyServiceTest {
     }
 
     @Test
-    void exchangeCurrency_Negative_Currency_Amount_Return_Exception() throws IOException, InterruptedException, CurrencyNotAvailableException, CurrencyAmountNotPositiveException {
+    void exchangeCurrency_Negative_Currency_Amount_Return_Exception() throws CurrencyNotAvailableException, CurrencyAmountNotPositiveException {
 
         CurrencyExchangeRequest request = new CurrencyExchangeRequest("USD", "EUR", -5.0);
 

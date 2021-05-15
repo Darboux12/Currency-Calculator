@@ -1,6 +1,5 @@
 package com.dariusz.calculator.unit;
 
-import com.dariusz.calculator.controller.CurrencyController;
 import com.dariusz.calculator.controller.standard.StandardCurrencyController;
 import com.dariusz.calculator.dal.entity.Currency;
 import com.dariusz.calculator.dto.request.CurrencyExchangeRequest;
@@ -15,7 +14,6 @@ import com.dariusz.calculator.service.exception.RateNotPresentException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -26,7 +24,6 @@ import org.springframework.http.ResponseEntity;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

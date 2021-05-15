@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.validation.Valid;
 import java.io.IOException;
 
 @RequestMapping(CurrencyEndpoint.server)
@@ -25,9 +26,9 @@ public interface CurrencyController {
     ResponseEntity<Iterable<CurrencyResponse>> findAllAvailableCurrency();
 
     @PostMapping(CurrencyEndpoint.exchangeCurrency)
-    ResponseEntity<CurrencyExchangeResponse> exchangeCurrency(@RequestBody CurrencyExchangeRequest exchangeRequest) throws IOException, InterruptedException, CurrencyNotAvailableException, CurrencyAmountNotPositiveException, RateNotPresentException;
+    ResponseEntity<CurrencyExchangeResponse> exchangeCurrency(@Valid @RequestBody CurrencyExchangeRequest exchangeRequest) throws IOException, InterruptedException, CurrencyNotAvailableException, CurrencyAmountNotPositiveException, RateNotPresentException;
 
     @PostMapping(CurrencyEndpoint.findRates)
-    ResponseEntity<Iterable<CurrencyRatesResponse>> findRates(@RequestBody CurrencyRatesRequest currencyRatesRequest) throws CurrencyNotAvailableException;
+    ResponseEntity<Iterable<CurrencyRatesResponse>> findRates(@Valid @RequestBody CurrencyRatesRequest currencyRatesRequest) throws CurrencyNotAvailableException;
 
 }

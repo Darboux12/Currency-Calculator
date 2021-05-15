@@ -10,6 +10,7 @@ import com.dariusz.calculator.dto.response.CurrencyRatesResponse;
 import com.dariusz.calculator.dto.response.CurrencyResponse;
 import com.dariusz.calculator.service.CurrencyService;
 import com.dariusz.calculator.service.CurrencyValidityService;
+import com.dariusz.calculator.service.EventService;
 import com.dariusz.calculator.service.exception.CurrencyAmountNotPositiveException;
 import com.dariusz.calculator.service.exception.CurrencyNotAvailableException;
 import com.dariusz.calculator.service.exception.RateNotPresentException;
@@ -39,6 +40,9 @@ class StandardCurrencyServiceTest {
 
     @Mock
     CurrencyValidityService validityService;
+
+    @Mock
+    EventService eventService;
 
     @InjectMocks
     private StandardCurrencyService currencyService;

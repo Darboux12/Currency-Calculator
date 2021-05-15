@@ -1,7 +1,9 @@
 package com.dariusz.calculator.service.standard;
 
 import com.dariusz.calculator.dal.entity.Currency;
+import com.dariusz.calculator.dal.entity.Event;
 import com.dariusz.calculator.dal.repository.CurrencyRepository;
+import com.dariusz.calculator.dal.repository.EventRepository;
 import com.dariusz.calculator.dto.other.NbpCurrencyDto;
 import com.dariusz.calculator.dto.request.CurrencyExchangeRequest;
 import com.dariusz.calculator.dto.request.CurrencyRatesRequest;
@@ -10,6 +12,7 @@ import com.dariusz.calculator.dto.response.CurrencyRatesResponse;
 import com.dariusz.calculator.dto.response.NbpApiCurrencyResponse;
 import com.dariusz.calculator.service.CurrencyService;
 import com.dariusz.calculator.service.CurrencyValidityService;
+import com.dariusz.calculator.service.EventService;
 import com.dariusz.calculator.service.exception.CurrencyAmountNotPositiveException;
 import com.dariusz.calculator.service.exception.CurrencyNotAvailableException;
 import com.dariusz.calculator.service.exception.RateNotPresentException;
@@ -31,21 +34,27 @@ import java.util.List;
 public class StandardCurrencyService implements CurrencyService {
 
     private final CurrencyValidityService currencyValidityService;
-
     private final CurrencyRepository currencyRepository;
+    private final EventService eventService;
 
-    public StandardCurrencyService(CurrencyValidityService currencyValidityService, CurrencyRepository currencyRepository) {
+    public StandardCurrencyService(CurrencyValidityService currencyValidityService, CurrencyRepository currencyRepository, EventRepository eventRepository, EventService eventService) {
         this.currencyValidityService = currencyValidityService;
         this.currencyRepository = currencyRepository;
+        this.eventService = eventService;
     }
 
     @Override
     public Iterable<Currency> findAllAvailableCurrency() {
+
+        this.eventService.addEventLog(new Event(getClass().getName(), "Find All Available Currency service invoked"));
+
         return currencyRepository.findAllAvailableCurrency();
     }
 
     @Override
     public CurrencyExchangeResponse exchangeCurrency(CurrencyExchangeRequest exchangeRequest) throws IOException, InterruptedException, CurrencyNotAvailableException, CurrencyAmountNotPositiveException, RateNotPresentException {
+
+        this.eventService.addEventLog(new Event(getClass().getName(), "Exchange Currency service invoked with request " + exchangeRequest));
 
         this.currencyValidityService.validateCurrencyExchangeRequest(exchangeRequest);
 
@@ -53,12 +62,18 @@ public class StandardCurrencyService implements CurrencyService {
 
         NbpCurrencyDto to = this.getNbpCurrencyDtoFromCurrencyCode(exchangeRequest.getCurrencyCodeTo());
 
-        return new CurrencyExchangeResponse(exchangeRequest,this.countCurrencyExchange(from,to,exchangeRequest.getAmount()));
+        CurrencyExchangeResponse response = new CurrencyExchangeResponse(exchangeRequest,this.countCurrencyExchange(from,to,exchangeRequest.getAmount()));
+
+        this.eventService.addEventLog(new Event(getClass().getName(), "Exchange Currency returning response " + response));
+
+        return response;
 
     }
 
     @Override
     public Iterable<CurrencyRatesResponse> findCurrencyRates(CurrencyRatesRequest currencyRatesRequest) throws CurrencyNotAvailableException {
+
+        this.eventService.addEventLog(new Event(getClass().getName(), "Find Currency Rates service invoked with request " + currencyRatesRequest));
 
         this.currencyValidityService.validateCurrencyAvailability(currencyRatesRequest.getCurrencyCodes());
 
@@ -80,9 +95,12 @@ public class StandardCurrencyService implements CurrencyService {
 
         });
 
+        this.eventService.addEventLog(new Event(getClass().getName(), "Find Currency Rates returning with response " + currencyRatesResponses));
+
         return currencyRatesResponses;
 
     }
+
 
     private NbpCurrencyDto getNbpCurrencyDtoFromCurrencyCode(String currencyCode) throws IOException, InterruptedException, RateNotPresentException {
 
@@ -131,17 +149,23 @@ public class StandardCurrencyService implements CurrencyService {
 
     private HttpResponse<String> performNbpApiRequest(String currencyCode) throws IOException, InterruptedException {
 
+        this.eventService.addEventLog(new Event(getClass().getName(), "Sending request to NBP api for currency code " + currencyCode));
+
         String API_PATH = "http://api.nbp.pl/api/exchangerates/rates/a/";
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(API_PATH + currencyCode))
                 .header("Accept","application/json")
                 .GET().build();
 
-        return HttpClient
+        HttpResponse<String> response = HttpClient
                 .newBuilder()
                 .proxy(ProxySelector.getDefault())
                 .build()
                 .send(request, HttpResponse.BodyHandlers.ofString());
+
+        this.eventService.addEventLog(new Event(getClass().getName(), "Received from NBP api response for code " + currencyCode + " " + response));
+
+        return response;
 
     }
 

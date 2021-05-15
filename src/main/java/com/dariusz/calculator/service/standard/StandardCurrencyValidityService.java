@@ -3,19 +3,22 @@ package com.dariusz.calculator.service.standard;
 import com.dariusz.calculator.dal.entity.Currency;
 import com.dariusz.calculator.dto.request.CurrencyExchangeRequest;
 import com.dariusz.calculator.dto.response.CurrencyExchangeResponse;
+import com.dariusz.calculator.dto.response.NbpApiCurrencyResponse;
 import com.dariusz.calculator.service.CurrencyValidityService;
 import com.dariusz.calculator.service.exception.CurrencyAmountNotPositiveException;
 import com.dariusz.calculator.service.exception.CurrencyNotAvailableException;
+import com.dariusz.calculator.service.exception.RateNotPresentException;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 @Service
 public class StandardCurrencyValidityService implements CurrencyValidityService {
 
     @Override
-    public void validateCurrencyAvailability(Set<String> currencyCodes) throws CurrencyNotAvailableException {
+    public void validateCurrencyAvailability(List<String> currencyCodes) throws CurrencyNotAvailableException {
 
         for(String currencyCode : currencyCodes)
             if(!this.isCurrencyCodeAvailable(currencyCode))
@@ -33,8 +36,16 @@ public class StandardCurrencyValidityService implements CurrencyValidityService 
 
     public void validateCurrencyExchangeRequest(CurrencyExchangeRequest request) throws CurrencyNotAvailableException, CurrencyAmountNotPositiveException {
 
-        this.validateCurrencyAvailability(Set.of(request.getCurrencyCodeFrom(),request.getCurrencyCodeTo()));
+        this.validateCurrencyAvailability(List.of(request.getCurrencyCodeFrom(),request.getCurrencyCodeTo()));
         this.validateCurrencyAmount(request.getAmount());
+
+    }
+
+    @Override
+    public void validateRatePresence(NbpApiCurrencyResponse response) throws RateNotPresentException {
+
+        if(response.getRates().size() <= 0)
+            throw new RateNotPresentException(response.getCode());
 
     }
 

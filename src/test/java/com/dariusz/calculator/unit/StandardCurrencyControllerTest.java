@@ -11,6 +11,7 @@ import com.dariusz.calculator.dto.response.CurrencyResponse;
 import com.dariusz.calculator.service.CurrencyService;
 import com.dariusz.calculator.service.exception.CurrencyAmountNotPositiveException;
 import com.dariusz.calculator.service.exception.CurrencyNotAvailableException;
+import com.dariusz.calculator.service.exception.RateNotPresentException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -72,7 +73,7 @@ class StandardCurrencyControllerTest {
     }
 
     @Test
-    void exchangeCurrency_Return_Status_OK() throws IOException, InterruptedException, CurrencyNotAvailableException, CurrencyAmountNotPositiveException {
+    void exchangeCurrency_Return_Status_OK() throws IOException, InterruptedException, CurrencyNotAvailableException, CurrencyAmountNotPositiveException, RateNotPresentException {
 
         CurrencyExchangeRequest request = new CurrencyExchangeRequest("USD", "EUR", 5.0);
 
@@ -85,7 +86,7 @@ class StandardCurrencyControllerTest {
     }
 
     @Test
-    void exchangeCurrency_Not_Available_Currency_From_Return_Exception() throws IOException, InterruptedException, CurrencyNotAvailableException, CurrencyAmountNotPositiveException {
+    void exchangeCurrency_Not_Available_Currency_From_Return_Exception() throws IOException, InterruptedException, CurrencyNotAvailableException, CurrencyAmountNotPositiveException, RateNotPresentException {
 
         CurrencyExchangeRequest request = new CurrencyExchangeRequest("NON", "EUR", 5.0);
 
@@ -100,7 +101,7 @@ class StandardCurrencyControllerTest {
     }
 
     @Test
-    void exchangeCurrency_Not_Available_Currency_To_Return_Exception() throws IOException, InterruptedException, CurrencyNotAvailableException, CurrencyAmountNotPositiveException {
+    void exchangeCurrency_Not_Available_Currency_To_Return_Exception() throws IOException, InterruptedException, CurrencyNotAvailableException, CurrencyAmountNotPositiveException, RateNotPresentException {
 
         CurrencyExchangeRequest request = new CurrencyExchangeRequest("USD", "NON", 5.0);
 
@@ -115,7 +116,7 @@ class StandardCurrencyControllerTest {
     }
 
     @Test
-    void exchangeCurrency_Negative_Currency_Amount_Return_Exception() throws IOException, InterruptedException, CurrencyNotAvailableException, CurrencyAmountNotPositiveException {
+    void exchangeCurrency_Negative_Currency_Amount_Return_Exception() throws IOException, InterruptedException, CurrencyNotAvailableException, CurrencyAmountNotPositiveException, RateNotPresentException {
 
         CurrencyExchangeRequest request = new CurrencyExchangeRequest("USD", "EUR", -5.0);
 
@@ -132,7 +133,7 @@ class StandardCurrencyControllerTest {
     @Test
     void findRates_Return_Status_OK() throws CurrencyNotAvailableException {
 
-        Set<String> currenciesCodes = Set.of(Currency.CHF.getCode());
+        List<String> currenciesCodes = List.of(Currency.CHF.getCode());
 
         CurrencyRatesRequest request = new CurrencyRatesRequest(currenciesCodes);
 
@@ -153,7 +154,7 @@ class StandardCurrencyControllerTest {
     @Test
     void findRates__Not_Available_Currency_Return_Exception() throws CurrencyNotAvailableException {
 
-        Set<String> currenciesCodes = Set.of("NON");
+        List<String> currenciesCodes = List.of("NON");
 
         CurrencyRatesRequest request = new CurrencyRatesRequest(currenciesCodes);
 

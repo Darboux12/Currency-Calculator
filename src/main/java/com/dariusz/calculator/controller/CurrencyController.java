@@ -9,6 +9,7 @@ import com.dariusz.calculator.dto.response.CurrencyRatesResponse;
 import com.dariusz.calculator.dto.response.CurrencyResponse;
 import com.dariusz.calculator.service.exception.CurrencyAmountNotPositiveException;
 import com.dariusz.calculator.service.exception.CurrencyNotAvailableException;
+import com.dariusz.calculator.service.exception.RateNotPresentException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +25,7 @@ public interface CurrencyController {
     ResponseEntity<Iterable<CurrencyResponse>> findAllAvailableCurrency();
 
     @PostMapping(CurrencyEndpoint.exchangeCurrency)
-    ResponseEntity<CurrencyExchangeResponse> exchangeCurrency(@RequestBody CurrencyExchangeRequest exchangeRequest) throws IOException, InterruptedException, CurrencyNotAvailableException, CurrencyAmountNotPositiveException;
+    ResponseEntity<CurrencyExchangeResponse> exchangeCurrency(@RequestBody CurrencyExchangeRequest exchangeRequest) throws IOException, InterruptedException, CurrencyNotAvailableException, CurrencyAmountNotPositiveException, RateNotPresentException;
 
     @PostMapping(CurrencyEndpoint.findRates)
     ResponseEntity<Iterable<CurrencyRatesResponse>> findRates(@RequestBody CurrencyRatesRequest currencyRatesRequest) throws CurrencyNotAvailableException;

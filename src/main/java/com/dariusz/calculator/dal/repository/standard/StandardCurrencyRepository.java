@@ -14,4 +14,10 @@ public class StandardCurrencyRepository implements CurrencyRepository {
     public List<Currency> findAllAvailableCurrency() {
         return Arrays.asList(Currency.values());
     }
+
+    @Override
+    public Currency findBaseCurrency() {
+        return Currency.PLN;
+    }
+
 }

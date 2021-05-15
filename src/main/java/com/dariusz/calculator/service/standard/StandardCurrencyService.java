@@ -2,6 +2,7 @@ package com.dariusz.calculator.service.standard;
 
 import com.dariusz.calculator.dal.entity.Currency;
 import com.dariusz.calculator.dal.repository.CurrencyRepository;
+import com.dariusz.calculator.dto.other.NbpCurrencyDto;
 import com.dariusz.calculator.dto.request.CurrencyExchangeRequest;
 import com.dariusz.calculator.dto.request.CurrencyRatesRequest;
 import com.dariusz.calculator.dto.response.CurrencyExchangeResponse;
@@ -11,6 +12,7 @@ import com.dariusz.calculator.service.CurrencyService;
 import com.dariusz.calculator.service.CurrencyValidityService;
 import com.dariusz.calculator.service.exception.CurrencyAmountNotPositiveException;
 import com.dariusz.calculator.service.exception.CurrencyNotAvailableException;
+import com.dariusz.calculator.service.exception.RateNotPresentException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
@@ -24,12 +26,12 @@ import java.net.http.HttpResponse;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class StandardCurrencyService implements CurrencyService {
 
     private final CurrencyValidityService currencyValidityService;
+
     private final CurrencyRepository currencyRepository;
 
     public StandardCurrencyService(CurrencyValidityService currencyValidityService, CurrencyRepository currencyRepository) {
@@ -43,23 +45,15 @@ public class StandardCurrencyService implements CurrencyService {
     }
 
     @Override
-    public CurrencyExchangeResponse exchangeCurrency(CurrencyExchangeRequest exchangeRequest) throws IOException, InterruptedException, CurrencyNotAvailableException, CurrencyAmountNotPositiveException {
+    public CurrencyExchangeResponse exchangeCurrency(CurrencyExchangeRequest exchangeRequest) throws IOException, InterruptedException, CurrencyNotAvailableException, CurrencyAmountNotPositiveException, RateNotPresentException {
 
         this.currencyValidityService.validateCurrencyExchangeRequest(exchangeRequest);
 
-        NbpApiCurrencyResponse currencyFrom = this.findCurrencyFromNbpApi(exchangeRequest.getCurrencyCodeFrom());
+        NbpCurrencyDto from = this.getNbpCurrencyDtoFromCurrencyCode(exchangeRequest.getCurrencyCodeFrom());
 
-        NbpApiCurrencyResponse currencyTo = this.findCurrencyFromNbpApi(exchangeRequest.getCurrencyCodeTo());
+        NbpCurrencyDto to = this.getNbpCurrencyDtoFromCurrencyCode(exchangeRequest.getCurrencyCodeTo());
 
-        double pln = currencyFrom.getRates().get(0).getMid() * exchangeRequest.getAmount();
-
-        double output = pln / currencyTo.getRates().get(0).getMid();
-
-        DecimalFormat df = new DecimalFormat("#.####");
-
-        df.setRoundingMode(RoundingMode.CEILING);
-
-        return new CurrencyExchangeResponse(exchangeRequest,Double.valueOf(df.format(output)));
+        return new CurrencyExchangeResponse(exchangeRequest,this.countCurrencyExchange(from,to,exchangeRequest.getAmount()));
 
     }
 
@@ -88,6 +82,45 @@ public class StandardCurrencyService implements CurrencyService {
 
         return currencyRatesResponses;
 
+    }
+
+    private NbpCurrencyDto getNbpCurrencyDtoFromCurrencyCode(String currencyCode) throws IOException, InterruptedException, RateNotPresentException {
+
+        return this.isBaseCurrency(currencyCode)
+
+                ? new NbpCurrencyDto(this.currencyRepository.findBaseCurrency().getName(), this.currencyRepository.findBaseCurrency().getCode(),1)
+
+                : this.convertNbpApiResponseToNbpCurrencyDto(this.findCurrencyFromNbpApi(currencyCode));
+
+    }
+
+    private NbpCurrencyDto convertNbpApiResponseToNbpCurrencyDto(NbpApiCurrencyResponse response) throws RateNotPresentException {
+
+        this.currencyValidityService.validateRatePresence(response);
+
+        return new NbpCurrencyDto(
+                response.getCurrency(),
+                response.getCode(),
+                response.getRates().get(0).getMid()
+        );
+
+    }
+
+    private boolean isBaseCurrency(String currencyCode){
+        return currencyCode.equals("PLN");
+    }
+
+    private double countCurrencyExchange(NbpCurrencyDto currencyFrom, NbpCurrencyDto currencyTo, double amount){
+
+        double pln = currencyFrom.getRate() * amount;
+
+        double output = pln / currencyTo.getRate();
+
+        DecimalFormat df = new DecimalFormat("#.####");
+
+        df.setRoundingMode(RoundingMode.CEILING);
+
+        return Double.valueOf(df.format(output));
     }
 
     private NbpApiCurrencyResponse findCurrencyFromNbpApi(String currencyCode) throws IOException, InterruptedException {

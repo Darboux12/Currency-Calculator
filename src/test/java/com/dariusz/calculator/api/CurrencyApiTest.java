@@ -10,9 +10,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static io.restassured.RestAssured.given;
@@ -45,7 +43,7 @@ class CurrencyApiTest {
     void Find_Rates_For_Given_Available_Currencies_Return_Rates(){
 
         CurrencyRatesRequest request = new CurrencyRatesRequest();
-        request.setCurrencyCodes(new HashSet<>());
+        request.setCurrencyCodes(new ArrayList<>());
         request.getCurrencyCodes().add(Currency.CHF.getCode());
         request.getCurrencyCodes().add(Currency.USD.getCode());
         request.getCurrencyCodes().add(Currency.GBP.getCode());
@@ -62,7 +60,7 @@ class CurrencyApiTest {
                         .spec(TestSpecification.buildResponseSpec())
                         .extract().as((Type) CurrencyRatesResponse[].class);
 
-        Set<String> expectedCodes = request.getCurrencyCodes();
+        List<String> expectedCodes = request.getCurrencyCodes();
 
         Set<String> actualCodes = Arrays.stream(currencyList).map(CurrencyRatesResponse::getCode).collect(Collectors.toSet());
 
@@ -74,7 +72,7 @@ class CurrencyApiTest {
     void Find_Rates_For_Given_Not_Available_Currencies_Return_CONFLICT(){
 
         CurrencyRatesRequest request = new CurrencyRatesRequest();
-        request.setCurrencyCodes(new HashSet<>());
+        request.setCurrencyCodes(new ArrayList<>());
         request.getCurrencyCodes().add("NOT_EXISTING_CURRENCY");
 
         given()

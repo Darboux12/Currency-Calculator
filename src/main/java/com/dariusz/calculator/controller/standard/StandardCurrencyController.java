@@ -10,6 +10,7 @@ import com.dariusz.calculator.dal.entity.Currency;
 import com.dariusz.calculator.service.CurrencyService;
 import com.dariusz.calculator.service.exception.CurrencyAmountNotPositiveException;
 import com.dariusz.calculator.service.exception.CurrencyNotAvailableException;
+import com.dariusz.calculator.service.exception.RateNotPresentException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,7 +39,7 @@ public class StandardCurrencyController implements CurrencyController {
     }
 
     @Override
-    public ResponseEntity<CurrencyExchangeResponse> exchangeCurrency(CurrencyExchangeRequest exchangeRequest) throws IOException, InterruptedException, CurrencyNotAvailableException, CurrencyAmountNotPositiveException {
+    public ResponseEntity<CurrencyExchangeResponse> exchangeCurrency(CurrencyExchangeRequest exchangeRequest) throws IOException, InterruptedException, CurrencyNotAvailableException, CurrencyAmountNotPositiveException, RateNotPresentException {
 
         return ResponseEntity.ok(this.currencyService.exchangeCurrency(exchangeRequest));
     }

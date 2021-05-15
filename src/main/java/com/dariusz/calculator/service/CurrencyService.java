@@ -7,6 +7,7 @@ import com.dariusz.calculator.dto.response.CurrencyExchangeResponse;
 import com.dariusz.calculator.dto.response.CurrencyRatesResponse;
 import com.dariusz.calculator.service.exception.CurrencyAmountNotPositiveException;
 import com.dariusz.calculator.service.exception.CurrencyNotAvailableException;
+import com.dariusz.calculator.service.exception.RateNotPresentException;
 
 import java.io.IOException;
 
@@ -14,7 +15,7 @@ public interface CurrencyService {
 
     public Iterable<Currency> findAllAvailableCurrency();
 
-    public CurrencyExchangeResponse exchangeCurrency(CurrencyExchangeRequest exchangeRequest) throws IOException, InterruptedException, CurrencyNotAvailableException, CurrencyAmountNotPositiveException;
+    public CurrencyExchangeResponse exchangeCurrency(CurrencyExchangeRequest exchangeRequest) throws IOException, InterruptedException, CurrencyNotAvailableException, CurrencyAmountNotPositiveException, RateNotPresentException;
 
     public Iterable<CurrencyRatesResponse> findCurrencyRates(CurrencyRatesRequest currencyRatesRequest) throws CurrencyNotAvailableException;
 

@@ -6,7 +6,9 @@ import java.util.List;
 
 public interface CurrencyRepository {
 
-    public List<Currency> findAllAvailableCurrency();
+    List<Currency> findAllAvailableCurrency();
+
+    Currency findBaseCurrency();
 
 
 

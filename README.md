@@ -70,7 +70,7 @@ To find all available currency rates use browser or send request with curl:
 $ curl localhost:8080/currency/find/rates
 ```
 
-Example request body
+Example request body:
 
 ```
 {"currencyCodes" : ["USD","PLN","CHF"]}
@@ -83,7 +83,7 @@ To exchange currency from USD to EUR use Postman or send request with curl :
 $ curl localhost:8080/currency/exchange
 ```
 
-Example request body
+Example request body:
 
 ```
 {
@@ -93,7 +93,7 @@ Example request body
 }
 ```
 
-To get events created by your requests To find all available currency rates use browser or send request with curl:
+To get events created by your requests use browser or send request with curl:
 
 ```
 $ curl localhost:8080/events/find/all

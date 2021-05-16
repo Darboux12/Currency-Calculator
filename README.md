@@ -46,14 +46,14 @@ $ docker-compose up
 To start and stop containers use:
 
 ```
-$ docekr start
+$ docker start
 $ docker stop
 ```
 
 To remove containers use:
 
 ```
-$ docekr-compose down
+$ docker-compose down
 ```
 
 ## Example usage

@@ -67,7 +67,7 @@ $ curl localhost:8080/currency/find/all
 To find all available currency rates use browser or send request with curl:
 
 ```
-$ curl localhost:8080/currency/find/rates
+$ curl -X POST localhost:8080/currency/find/rates
 ```
 
 Example request body:
@@ -80,7 +80,7 @@ Example request body:
 To exchange currency from USD to EUR use Postman or send request with curl :
 
 ```
-$ curl localhost:8080/currency/exchange
+$ curl -X POST localhost:8080/currency/exchange
 ```
 
 Example request body:

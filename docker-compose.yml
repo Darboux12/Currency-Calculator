@@ -29,11 +29,11 @@ services:
       - database
 
   flyway:
-    image: boxfuse/flyway:latest-alpine
+    image: flyway/flyway
     container_name: my-flyway
-    command: -url=jdbc:mysql://mysql-database:3306/calculator -schemas=public -user=root -password=currencydatabase -connectRetries=60 migrate
+    command: -url=jdbc:mysql://mysql-database:3306/calculator -schemas=calculator -user=root -password=currencydatabase -connectRetries=60 migrate
     volumes:
-      - ./src/main/resources/db.migration:/flyway/sql/
+      - ./src/main/resources/db.db:/flyway/sql/
     depends_on:
       - database
 

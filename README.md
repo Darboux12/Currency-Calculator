@@ -32,7 +32,7 @@ Project is developed with:
 * Maven
 * Hibernate
 * Docker
-* Flyway\
+* Flyway
 
 ## Setup
 
